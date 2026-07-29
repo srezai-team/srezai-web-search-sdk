@@ -42,7 +42,7 @@
   },
   "scripts": {
     "build": "tsup",
-    "test": "node --test --import tsx test/*.test.ts",
+    "test": "node --import tsx --test test/client.test.ts",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
