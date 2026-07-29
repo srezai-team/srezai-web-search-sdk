@@ -1,0 +1,55 @@
+{
+  "name": "srezai",
+  "version": "0.1.0",
+  "description": "Официальный клиент поискового API срезAI: веб-поиск, чтение страниц и извлечение по схеме для ИИ-агентов",
+  "license": "MIT",
+  "author": "срезAI <support@srezai.ru>",
+  "homepage": "https://srezai.ru",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/srezai-team/srezai-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/srezai-team/srezai-js/issues"
+  },
+  "keywords": [
+    "search",
+    "api",
+    "llm",
+    "rag",
+    "agents",
+    "scraping",
+    "srezai"
+  ],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "node --test --import tsx test/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "@types/node": "^22.10.2"
+  }
+}

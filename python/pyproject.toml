@@ -1,0 +1,44 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "srezai"
+version = "0.1.0"
+description = "Python-клиент поискового API срезAI: веб-поиск, чтение страниц и извлечение по схеме для ИИ-агентов"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "срезAI", email = "support@srezai.ru" }]
+keywords = ["search", "api", "llm", "rag", "agents", "scraping", "srezai"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Internet :: WWW/HTTP :: Indexing/Search",
+]
+dependencies = ["httpx>=0.24,<1"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "pytest-httpx>=0.30", "mypy>=1.8", "ruff>=0.4"]
+
+[project.urls]
+Homepage = "https://srezai.ru"
+Documentation = "https://srezai.ru/docs"
+Repository = "https://github.com/srezai-team/srezai-python"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/srezai"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
