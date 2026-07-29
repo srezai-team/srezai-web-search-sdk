@@ -11,11 +11,16 @@
 
 from __future__ import annotations
 
+import sys
 from collections.abc import Mapping, Sequence
 from typing import Any, Literal
 
 import httpx
-from typing_extensions import Self
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:  # 3.10: Self ещё не в typing
+    from typing_extensions import Self
 
 from ._client import DEFAULT_BASE_URL, DEFAULT_TIMEOUT, Transport
 

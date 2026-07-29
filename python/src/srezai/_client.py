@@ -7,12 +7,17 @@
 from __future__ import annotations
 
 import os
+import sys
 import time
 from collections.abc import Mapping
 from typing import Any
 
 import httpx
-from typing_extensions import Self
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:  # 3.10: Self ещё не в typing
+    from typing_extensions import Self
 
 from .errors import ERROR_CLASSES, RateLimited, SrezAIError
 

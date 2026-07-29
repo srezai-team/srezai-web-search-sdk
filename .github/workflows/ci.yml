@@ -28,6 +28,15 @@ jobs:
       - run: mypy src
       - run: pytest -q
 
+      # Ставим собранный пакет отдельно, без dev-зависимостей: так ловится
+      # необъявленная зависимость. В dev-окружении она приезжает попутно с
+      # линтерами, и пакет «работает» до первой установки у пользователя.
+      - run: pip install build && python -m build
+      - run: |
+          python -m venv /tmp/fresh
+          /tmp/fresh/bin/pip install --quiet dist/*.whl
+          /tmp/fresh/bin/python -c "from srezai import SrezAI; import srezai; print(srezai.__version__)"
+
   js:
     runs-on: ubuntu-latest
     defaults:
