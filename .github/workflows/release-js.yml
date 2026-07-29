@@ -1,0 +1,40 @@
+name: Release JS
+
+# Публикация по тегу вида js-v0.1.0 — отдельно от py-v*: пакеты в одном
+# репозитории, но версии свои.
+on:
+  push:
+    tags: ["js-v*"]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: npm
+    defaults:
+      run:
+        working-directory: js
+    permissions:
+      contents: read
+      # OIDC для доверенной публикации npm: долгоживущий токен не нужен.
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: https://registry.npmjs.org
+          cache: npm
+          cache-dependency-path: js/package-lock.json
+
+      # Прогон до публикации: версию в npm повторно не занять.
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+      # npm 11.5+ умеет OIDC; --provenance прикладывает к релизу
+      # подтверждение, из какого коммита он собран.
+      - run: npm install -g npm@latest
+      - run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
