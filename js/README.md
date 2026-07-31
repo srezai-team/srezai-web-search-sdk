@@ -1,71 +1,134 @@
-# srezai
+# srezai — JS/TypeScript-клиент срезAI
 
-Официальный JS/TypeScript-клиент [срезAI](https://srezai.ru) — поиск, чтение
-страниц и извлечение структурированных данных для LLM-агентов.
+[![npm](https://img.shields.io/npm/v/srezai)](https://www.npmjs.com/package/srezai)
+[![Node](https://img.shields.io/node/v/srezai)](https://www.npmjs.com/package/srezai)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Official JS/TypeScript client for [SrezAI](https://srezai.ru): search, page
-reading and structured extraction built for LLM agents.
+Официальный JS/TypeScript-клиент [срезAI](https://srezai.ru) — платформы
+веб-доступа для LLM-агентов и RAG-систем: поиск по вебу, чтение страниц в
+Markdown, извлечение структурированных данных по схеме и агентное исследование.
+
+Official JS/TypeScript client for [срезAI (SrezAI)](https://srezai.ru), a
+web-access platform for LLM agents and RAG systems: web search, page reading as
+Markdown, schema-driven structured extraction and agentic research.
 
 ```bash
 npm install srezai
 ```
+
+Требования: Node.js 18 и выше. Зависимостей нет — клиент работает на встроенном
+`fetch`. Пакет публикуется в ESM и CommonJS с отдельными декларациями типов для
+каждого формата.
 
 ## Быстрый старт / Quickstart
 
 ```ts
 import { SrezAI } from "srezai";
 
-const client = new SrezAI(); // ключ из SREZAI_API_KEY
+const client = new SrezAI();                  // ключ из SREZAI_API_KEY
 
-const { results } = await client.search<{ results: Array<{ title: string; url: string }> }>(
-  "новости про ИИ",
-  { num: 5, timeRange: "week" },
-);
+const { results } = await client.search<{
+  results: Array<{ title: string; url: string }>;
+}>("новости про ИИ", { num: 5, timeRange: "week" });
+
 for (const item of results) console.log(item.title, item.url);
 
 const page = await client.readUrl("https://example.com", { maxChars: 8000 });
 ```
 
-Ключ берётся из `apiKey`, а если его нет — из переменной окружения
-`SREZAI_API_KEY`. Получить ключ можно в [дашборде](https://srezai.ru/dashboard).
+Ключ передаётся параметром `apiKey`, а при его отсутствии берётся из переменной
+окружения `SREZAI_API_KEY`. Создать ключ можно в
+[личном кабинете](https://srezai.ru/dashboard).
 
-Работает в Node 18+ на встроенном `fetch`, без зависимостей. Можно передать свой
-`fetch` — например, обёрнутый в трассировку.
+Методы принимают параметр типа для формы ответа — это позволяет типизировать
+результат под конкретный запрос, не полагаясь на общий индексный тип.
 
 ## Методы / Methods
 
-| Метод | Что делает |
-| --- | --- |
-| `search(query, opts?)` | Поиск по вебу: десятки движков одним запросом |
-| `imageSearch(query, opts?)` | Поиск картинок |
-| `readUrl(url, opts?)` | Страница → плотный Markdown |
-| `readUrls(urls, opts?)` | То же, до 5 страниц за один вызов |
-| `fetchPage(url, opts?)` | Скриншот и Markdown через реальный браузер |
-| `extract(schema, opts)` | Данные по вашей схеме, без выдуманных значений |
-| `deepResearch(query)` | Агентное исследование: ищет, читает, синтезирует |
+| Метод | Назначение | Стоимость вызова |
+| --- | --- | --- |
+| `search(query, opts?)` | Веб-поиск по десяткам движков одним запросом | 1 кредит |
+| `imageSearch(query, opts?)` | Поиск изображений: ссылки, источник, разрешение | 1 кредит |
+| `readUrl(url, opts?)` | Страница → плотный Markdown без навигации и рекламы | 1 кредит |
+| `readUrls(urls, opts?)` | То же для группы страниц (до 5 за вызов, параллельно) | 1 кредит за страницу |
+| `fetchPage(url, opts?)` | Рендер страницы браузером: скриншот и Markdown | 3 кредита |
+| `extract(schema, opts)` | Данные строго по схеме, без выдуманных значений | 4 кредита за страницу |
+| `deepResearch(query)` | Агентное исследование: поиск, чтение, синтез ответа | 20 кредитов + 3 за 1000 токенов ответа |
 
-Полный список параметров — в [документации API](https://srezai.ru/docs).
+Тарифная сетка и калькулятор — на странице
+[цен](https://srezai.ru/pricing); полное описание параметров — в
+[документации API](https://srezai.ru/docs).
 
-`get_usage` (баланс и цены) в SDK нет: этот инструмент доступен только через
-MCP-сервер, REST-эндпоинта для него пока не существует.
+Инструмент учёта `get_usage` (баланс, квота, цены) в SDK отсутствует: он доступен
+только через [MCP-сервер](https://github.com/srezai-team/srezai-mcp),
+REST-эндпоинта для него не предусмотрено. В REST эту роль выполняют заголовки
+`X-RateLimit-*` в каждом ответе.
 
-## Извлечение по схеме / Structured extraction
+### Поиск
 
 ```ts
-const data = await client.extract<{ title: string; price: number | null }>(
-  { title: "string", price: "number?" },
-  { url: "https://shop.example/item/42", instruction: "бери цену со скидкой" },
+const found = await client.search("векторные базы данных", {
+  num: 10,
+  category: "it",                 // general | news | it | science
+  language: "ru",                 // auto | ru | en
+  timeRange: "month",             // "" | day | week | month | year
+  depth: "auto",                  // flash — быстрее и уже; auto — шире
+  excerpts: true,                 // подтянуть текст топ-страниц
+  includeDomains: ["habr.com"],   // только эти сайты и их поддомены
+});
+```
+
+Все перечисления описаны литеральными типами, поэтому опечатка в значении
+`category` или `timeRange` обнаруживается на этапе компиляции, а не в рантайме.
+
+### Чтение страниц
+
+```ts
+const page = await client.readUrl("https://example.com", {
+  maxChars: 8000,
+  engine: "auto",
+});
+
+const batch = await client.readUrls(
+  ["https://a.example", "https://b.example"],
+  { maxChars: 4000 },
 );
 ```
 
-Схему можно задать сокращённо (`"number?"` — необязательное, `"string[]"` —
-массив) или полным JSON Schema. Чего на странице нет, приходит как `null`:
-значения не выдумываются. Описания полей заметно повышают точность.
+Параметр `engine` управляет способом загрузки. По умолчанию `auto`: клиент
+начинает с быстрого способа и повышает ступень самостоятельно, если содержимое не
+получено. Явное значение имеет смысл указывать только для заранее известного
+сайта — `fast` для статики и документации, `dynamic` для SPA, требующих
+выполнения JavaScript, `stealth` для максимально приближенного к браузеру
+поведения.
 
-## Ошибки / Errors
+На батче стоит задавать `maxChars` скромнее: пять больших страниц вытеснят из
+контекста модели всё остальное. Если часть адресов не открылась, остальные
+возвращаются, а неудачи перечисляются в ответе.
 
-Каждая ошибка API приходит с машинным кодом, и клиент поднимает свой класс на
-каждый код. Ловите базовый `SrezAIError`, если код не важен.
+### Извлечение структурированных данных
+
+```ts
+const data = await client.extract<{ title: string; price: number | null }>(
+  { title: "string", price: "number?", tags: "string[]" },
+  {
+    url: "https://shop.example/item/42",
+    instruction: "использовать цену со скидкой",
+  },
+);
+```
+
+Схема задаётся сокращённой формой (`?` — необязательное поле, `[]` — массив) или
+полным JSON Schema; описания полей в полной форме заметно повышают точность
+разбора. Значения, которых на странице нет, возвращаются как `null` и никогда не
+достраиваются моделью. Для группы страниц под одну схему используется `urls`
+(до 5 адресов, каждый тарифицируется отдельно) — взаимоисключимо с `url`.
+
+## Обработка ошибок / Errors
+
+Каждая ошибка API содержит машинный код, которому соответствует отдельный класс
+исключения. Это позволяет ветвиться по типу ошибки, не разбирая текст сообщения.
+Если код не важен, достаточно перехватить базовый `SrezAIError`.
 
 ```ts
 import { SrezAI, HostUnresolved, RateLimited, SsrfBlocked } from "srezai";
@@ -74,34 +137,65 @@ try {
   await client.readUrl("https://exmaple.com");
 } catch (err) {
   if (err instanceof HostUnresolved) {
-    // домена не существует — скорее всего опечатка в адресе
+    // домена не существует — вероятна опечатка в адресе
   } else if (err instanceof SsrfBlocked) {
-    // адрес запрещён: локальная сеть или нестандартный порт
+    // адрес запрашивать нельзя: локальная сеть или служебный диапазон
   } else if (err instanceof RateLimited) {
     console.log("лимит; повторить через", err.retryAfter, "с");
   } else throw err;
 }
 ```
 
-`HostUnresolved` и `SsrfBlocked` — разные вещи: первое значит «проверьте адрес
-на опечатку», второе — «такой адрес запрашивать нельзя».
+`HostUnresolved` и `SsrfBlocked` различаются намеренно: первое означает
+«проверьте адрес на опечатку», второе — «такой адрес запрашивать нельзя». Полный
+каталог кодов — на [srezai.ru/docs/errors](https://srezai.ru/docs/errors).
 
-Клиент сам повторяет запрос при `rate_limited`, `service_unavailable`,
-`search_unavailable` и `upstream_timeout` — с экспоненциальной задержкой и с
-учётом `retryAfterSec` от сервера. Остальные коды возвращаются сразу: повтор
-`bad_request` ничего не изменит.
+Клиент автоматически повторяет запрос при временных сбоях — `rate_limited`,
+`service_unavailable`, `search_unavailable`, `upstream_timeout` — с
+экспоненциальной задержкой и приоритетом подсказки `retryAfterSec` от сервера.
+Ошибки запроса (`bad_request`, `schema_invalid`, `unauthorized`, `ssrf_blocked`)
+возвращаются немедленно: их повтор не изменит результат.
 
-## Настройка / Configuration
+## Конфигурация / Configuration
 
 ```ts
 const client = new SrezAI({
-  apiKey: "srz_live_...",
-  baseUrl: "https://srezai.ru", // для self-hosted или стейджинга
-  timeoutMs: 180_000,           // deepResearch идёт до двух минут
+  apiKey: "srz_live_…",         // по умолчанию — SREZAI_API_KEY
+  baseUrl: "https://srezai.ru", // для стейджинга или изолированного контура
+  timeoutMs: 180_000,           // deepResearch выполняется до двух минут
   maxRetries: 2,
+  fetch: instrumentedFetch,     // своя реализация fetch
 });
 ```
 
-## Лицензия / License
+Подстановка `fetch` предусмотрена для сред, где исходящие запросы проходят через
+трассировку, корпоративный прокси или собственный слой политик — клиент не
+навязывает свой транспорт.
 
-MIT
+Таймаут по умолчанию выбран с запасом под `deepResearch`: он синхронный и
+занимает до двух минут. Уменьшать его стоит только если этот метод не
+используется — оборванное соединение не отменяет уже начатую работу на сервере.
+
+## Ограничения частоты / Rate limits
+
+Ключ API: 10 запросов за 10 секунд и 200 запросов в сутки. Батчевые методы
+`readUrls` и `extract` принимают до 5 адресов за вызов. Текущее состояние квоты
+возвращается в заголовках `X-RateLimit-*`. Лимиты выше базовых согласуются
+индивидуально — [support@srezai.ru](mailto:support@srezai.ru).
+
+## Разработка / Development
+
+```bash
+npm ci && npm run typecheck && npm test && npm run build
+```
+
+Тесты выполняются локально против HTTP-сервера из `test/` и обращений к рабочему
+API не требуют.
+
+## Поддержка и лицензия / Support and license
+
+- Документация API — [srezai.ru/docs](https://srezai.ru/docs)
+- Вопросы и дефекты — [GitHub Issues](https://github.com/srezai-team/srezai-sdk/issues)
+- Техническая поддержка — [support@srezai.ru](mailto:support@srezai.ru)
+
+Лицензия — [MIT](LICENSE).
