@@ -173,3 +173,16 @@ test("extract требует ровно одну цель", async () => {
   );
   await assert.rejects(() => client.extract({ t: "string" }), /ровно одно/);
 });
+
+test("answerSearch шлёт query и depth на /api/v1/answer", async () => {
+  await withServer(
+    [{ json: { answer: "ответ", sources: [], confidence: 0.9 } }],
+    async (baseUrl, captured) => {
+      const client = new SrezAI({ apiKey: KEY, baseUrl, maxRetries: 0 });
+      const res = await client.answerSearch<{ answer: string }>("вопрос", { depth: "fast" });
+      assert.equal(res.answer, "ответ");
+      assert.equal(captured[0]?.path, "/api/v1/answer");
+      assert.deepEqual(captured[0]?.body, { query: "вопрос", depth: "fast" });
+    },
+  );
+});

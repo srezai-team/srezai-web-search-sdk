@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "srezai"
-version = "0.1.0"
+version = "0.2.0"
 description = "Python-клиент поискового API срезAI: веб-поиск, чтение страниц и извлечение по схеме для ИИ-агентов"
 readme = "README.md"
 requires-python = ">=3.10"

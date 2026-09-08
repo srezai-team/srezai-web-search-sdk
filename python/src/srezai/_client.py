@@ -135,7 +135,7 @@ class Transport:
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
-            "User-Agent": "srezai-python/0.1.0",
+            "User-Agent": "srezai-python/0.2.0",
         }
 
         last: SrezAIError | None = None

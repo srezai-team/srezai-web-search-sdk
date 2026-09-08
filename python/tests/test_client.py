@@ -134,6 +134,19 @@ def test_extract_requires_one_target() -> None:
         make().extract({"t": "string"})
 
 
+def test_answer_search_sends_query_and_depth(httpx_mock: HTTPXMock) -> None:
+    httpx_mock.add_response(json={"answer": "ответ", "sources": [], "confidence": 0.9})
+    result = make().answer_search("вопрос", depth="fast")
+
+    assert result["answer"] == "ответ"
+    req = httpx_mock.get_requests()[0]
+    assert req.url.path == "/api/v1/answer"
+    import json
+
+    body = json.loads(req.content)
+    assert body == {"query": "вопрос", "depth": "fast"}
+
+
 def test_unsupported_system_proxy_explains_itself(monkeypatch: pytest.MonkeyPatch) -> None:
     """Прокси, который httpx не умеет, не должен выглядеть как поломка SDK."""
     monkeypatch.delenv("no_proxy", raising=False)

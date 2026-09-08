@@ -30,6 +30,9 @@ Depth = Literal["flash", "auto"]
 TimeRange = Literal["", "day", "week", "month", "year"]
 Language = Literal["auto", "ru", "en"]
 
+# Глубина answer_search: не путать с Depth у search — другая шкала.
+AnswerDepth = Literal["fast", "balanced", "deep"]
+
 
 class SrezAI:
     """Точка входа в API. Один экземпляр можно держать на всё приложение.
@@ -241,3 +244,26 @@ class SrezAI:
         агрессивный внешний таймаут.
         """
         return self._t.post("/api/v1/deep", {"query": query})
+
+    # --- Answer Search ---
+
+    def answer_search(
+        self,
+        query: str,
+        *,
+        depth: AnswerDepth | None = None,
+        language: Language | None = None,
+    ) -> dict[str, Any]:
+        """RAG-ответ по вебу с семантическим ранжированием источников.
+
+        В отличие от :meth:`deep_research`, цена фиксирована по ``depth``, а не
+        по объёму ответа: ``"fast"`` — 50 кредитов, ``"balanced"`` (по
+        умолчанию на сервере) — 100, ``"deep"`` — 200.
+
+        :param depth: ``"fast"`` — 2 страницы, ``"balanced"`` — 5,
+            ``"deep"`` — 10.
+        """
+        return self._t.post(
+            "/api/v1/answer",
+            {"query": query, "depth": depth, "language": language},
+        )

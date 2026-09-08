@@ -5,6 +5,9 @@ export type Language = "auto" | "ru" | "en";
 export type TimeRange = "" | "day" | "week" | "month" | "year";
 export type Depth = "flash" | "auto";
 
+/** Глубина answerSearch: не путать с Depth у search — другая шкала. */
+export type AnswerDepth = "fast" | "balanced" | "deep";
+
 /**
  * Как забирать страницу.
  *
@@ -42,6 +45,12 @@ export interface ReadOptions {
   /** Сколько символов вернуть (200–50000). Поднимайте, если нужен весь текст. */
   maxChars?: number;
   engine?: Engine;
+}
+
+export interface AnswerSearchOptions {
+  /** fast — 2 страницы, balanced (по умолчанию) — 5, deep — 10. Цена тарифа фиксирована по depth, не зависит от объёма ответа. */
+  depth?: AnswerDepth;
+  language?: Language;
 }
 
 export interface ExtractOptions {

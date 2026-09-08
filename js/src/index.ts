@@ -16,6 +16,8 @@ export {
 } from "./errors.js";
 export { DEFAULT_BASE_URL, DEFAULT_TIMEOUT_MS } from "./transport.js";
 export type {
+  AnswerDepth,
+  AnswerSearchOptions,
   Category,
   Depth,
   Engine,

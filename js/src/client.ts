@@ -1,5 +1,6 @@
 import { Transport, type TransportOptions } from "./transport.js";
 import type {
+  AnswerSearchOptions,
   ExtractOptions,
   ImageSearchOptions,
   ReadOptions,
@@ -107,5 +108,18 @@ export class SrezAI {
    */
   async deepResearch<T = Record<string, unknown>>(query: string): Promise<T> {
     return this.t.post<T>("/api/v1/deep", { query });
+  }
+
+  /**
+   * RAG-ответ по вебу с семантическим ранжированием источников.
+   *
+   * В отличие от `deepResearch`, цена фиксирована по `depth`, а не по объёму
+   * ответа: fast — 50 кредитов, balanced — 100, deep — 200.
+   */
+  async answerSearch<T = Record<string, unknown>>(
+    query: string,
+    opts: AnswerSearchOptions = {},
+  ): Promise<T> {
+    return this.t.post<T>("/api/v1/answer", { query, ...opts });
   }
 }

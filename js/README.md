@@ -54,6 +54,7 @@ const page = await client.readUrl("https://example.com", { maxChars: 8000 });
 | `fetchPage(url, opts?)` | Рендер страницы браузером: скриншот и Markdown | 3 кредита |
 | `extract(schema, opts)` | Данные строго по схеме, без выдуманных значений | 4 кредита за страницу |
 | `deepResearch(query)` | Агентное исследование: поиск, чтение, синтез ответа | 20 кредитов + 3 за 1000 токенов ответа |
+| `answerSearch(query, opts?)` | RAG-ответ по вебу с семантическим ранжированием источников | 50 / 100 / 200 кредитов — по `depth` |
 
 Тарифная сетка и калькулятор — на странице
 [цен](https://srezai.ru/pricing); полное описание параметров — в
@@ -123,6 +124,22 @@ const data = await client.extract<{ title: string; price: number | null }>(
 разбора. Значения, которых на странице нет, возвращаются как `null` и никогда не
 достраиваются моделью. Для группы страниц под одну схему используется `urls`
 (до 5 адресов, каждый тарифицируется отдельно) — взаимоисключимо с `url`.
+
+### Answer Search
+
+```ts
+const { answer, sources, confidence } = await client.answerSearch(
+  "как работает BGE-reranker",
+  { depth: "balanced" },   // fast | balanced (по умолчанию) | deep
+);
+console.log(answer);
+for (const s of sources) console.log(s.title, s.url, s.relevance);
+```
+
+В отличие от `deepResearch`, стоимость фиксирована по `depth` и не зависит от
+объёма ответа: `fast` — 50 кредитов, `balanced` — 100, `deep` — 200. `sources`
+отсортированы по релевантности через семантический реранкер, а не только по
+порядку поиска.
 
 ## Обработка ошибок / Errors
 

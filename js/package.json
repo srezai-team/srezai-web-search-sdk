@@ -1,6 +1,6 @@
 {
   "name": "srezai",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Официальный клиент поискового API срезAI: веб-поиск, чтение страниц и извлечение по схеме для ИИ-агентов",
   "license": "MIT",
   "author": "срезAI <support@srezai.ru>",
