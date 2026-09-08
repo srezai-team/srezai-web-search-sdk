@@ -38,7 +38,7 @@ Model Context Protocol.
 ```python
 from srezai import SrezAI
 
-with SrezAI() as client:                      # ключ из SREZAI_API_KEY
+with SrezAI() as client:  # ключ из SREZAI_API_KEY
     found = client.search("новости про ИИ", num=5, time_range="week")
     for item in found["results"]:
         print(item["title"], item["url"])

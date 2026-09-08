@@ -23,7 +23,7 @@ pip install srezai
 ```python
 from srezai import SrezAI
 
-with SrezAI() as client:                      # ключ из SREZAI_API_KEY
+with SrezAI() as client:  # ключ из SREZAI_API_KEY
     found = client.search("новости про ИИ", num=5, time_range="week")
     for item in found["results"]:
         print(item["title"], item["url"])
@@ -68,12 +68,12 @@ with SrezAI() as client:                      # ключ из SREZAI_API_KEY
 found = client.search(
     "векторные базы данных",
     num=10,
-    category="it",                       # general | news | it | science
-    language="ru",                       # auto | ru | en
-    time_range="month",                  # "" | day | week | month | year
-    depth="auto",                         # flash — быстрее и уже; auto — шире
-    excerpts=True,                        # подтянуть текст топ-страниц
-    include_domains=["habr.com"],         # только эти сайты и их поддомены
+    category="it",  # general | news | it | science
+    language="ru",  # auto | ru | en
+    time_range="month",  # "" | day | week | month | year
+    depth="auto",  # flash — быстрее и уже; auto — шире
+    excerpts=True,  # подтянуть текст топ-страниц
+    include_domains=["habr.com"],  # только эти сайты и их поддомены
 )
 ```
 
@@ -116,7 +116,7 @@ data = client.extract(
 ```python
 result = client.answer_search(
     "как работает BGE-reranker",
-    depth="balanced",   # fast | balanced (по умолчанию) | deep
+    depth="balanced",  # fast | balanced (по умолчанию) | deep
 )
 print(result["answer"])
 for s in result["sources"]:
@@ -162,9 +162,9 @@ with SrezAI() as client:
 
 ```python
 client = SrezAI(
-    api_key="srz_live_…",           # по умолчанию — SREZAI_API_KEY
-    base_url="https://srezai.ru",   # для стейджинга или изолированного контура
-    timeout=180.0,                  # секунды; deep_research идёт до двух минут
+    api_key="srz_live_…",  # по умолчанию — SREZAI_API_KEY
+    base_url="https://srezai.ru",  # для стейджинга или изолированного контура
+    timeout=180.0,  # секунды; deep_research идёт до двух минут
     max_retries=2,
 )
 ```
