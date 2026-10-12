@@ -7,11 +7,11 @@
   "homepage": "https://srezai.ru",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/srezai-team/srezai-sdk.git",
+    "url": "git+https://github.com/srezai-team/srezai-web-search-sdk.git",
     "directory": "js"
   },
   "bugs": {
-    "url": "https://github.com/srezai-team/srezai-sdk/issues"
+    "url": "https://github.com/srezai-team/srezai-web-search-sdk/issues"
   },
   "keywords": [
     "search",

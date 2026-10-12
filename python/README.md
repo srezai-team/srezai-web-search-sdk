@@ -58,7 +58,7 @@ with SrezAI() as client:  # ключ из SREZAI_API_KEY
 [документации API](https://srezai.ru/docs).
 
 Инструмент учёта `get_usage` (баланс, квота, цены) в SDK отсутствует: он доступен
-только через [MCP-сервер](https://github.com/srezai-team/srezai-mcp), REST-
+только через [MCP-сервер](https://github.com/srezai-team/srezai-mcp-web-search), REST-
 эндпоинта для него не предусмотрено. В REST эту роль выполняют заголовки
 `X-RateLimit-*` в каждом ответе.
 
@@ -197,7 +197,7 @@ pip install -e ".[dev]" && ruff check . && mypy src && pytest -q
 ## Поддержка и лицензия / Support and license
 
 - Документация API — [srezai.ru/docs](https://srezai.ru/docs)
-- Вопросы и дефекты — [GitHub Issues](https://github.com/srezai-team/srezai-sdk/issues)
+- Вопросы и дефекты — [GitHub Issues](https://github.com/srezai-team/srezai-web-search-sdk/issues)
 - Техническая поддержка — [support@srezai.ru](mailto:support@srezai.ru)
 
 Лицензия — [MIT](LICENSE).

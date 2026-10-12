@@ -2,7 +2,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/srezai?label=pypi%20srezai)](https://pypi.org/project/srezai/)
 [![npm](https://img.shields.io/npm/v/srezai?label=npm%20srezai)](https://www.npmjs.com/package/srezai)
-[![CI](https://github.com/srezai-team/srezai-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/srezai-team/srezai-sdk/actions/workflows/ci.yml)
+[![CI](https://github.com/srezai-team/srezai-web-search-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/srezai-team/srezai-web-search-sdk/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Официальные клиентские библиотеки [срезAI](https://srezai.ru) — платформы
@@ -22,7 +22,7 @@ schema-driven structured extraction and agentic research over a single REST API.
 | [`srezai`](https://www.npmjs.com/package/srezai) (npm) | Node.js 18, 20, 22 | `npm install srezai` | [js/README.md](js/README.md) |
 
 Дополнительно платформа доступна как
-[MCP-сервер](https://github.com/srezai-team/srezai-mcp) — для сред, работающих по
+[MCP-сервер](https://github.com/srezai-team/srezai-mcp-web-search) — для сред, работающих по
 Model Context Protocol.
 
 Оба клиента находятся в одном репозитории намеренно: контракт API у них общий и
@@ -218,7 +218,7 @@ Pull request принимаются. Изменение контракта API �
 ## Поддержка и лицензия / Support and license
 
 - Документация API — [srezai.ru/docs](https://srezai.ru/docs)
-- Вопросы и дефекты — [GitHub Issues](https://github.com/srezai-team/srezai-sdk/issues)
+- Вопросы и дефекты — [GitHub Issues](https://github.com/srezai-team/srezai-web-search-sdk/issues)
 - Техническая поддержка — [support@srezai.ru](mailto:support@srezai.ru)
 - Коммерческие условия и интеграция — [hello@srezai.ru](mailto:hello@srezai.ru)
 

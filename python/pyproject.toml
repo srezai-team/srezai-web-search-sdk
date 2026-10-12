@@ -34,8 +34,8 @@ dev = ["pytest>=7", "pytest-httpx>=0.30", "mypy>=1.8", "ruff>=0.4"]
 [project.urls]
 Homepage = "https://srezai.ru"
 Documentation = "https://srezai.ru/docs"
-Repository = "https://github.com/srezai-team/srezai-sdk"
-Issues = "https://github.com/srezai-team/srezai-sdk/issues"
+Repository = "https://github.com/srezai-team/srezai-web-search-sdk"
+Issues = "https://github.com/srezai-team/srezai-web-search-sdk/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/srezai"]
