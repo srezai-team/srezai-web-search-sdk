@@ -59,6 +59,7 @@ const { results } = await client.search("новости про ИИ", {
 for (const item of results) console.log(item.title, item.url);
 
 const page = await client.readUrl("https://example.com", { maxChars: 8000 });
+const { results } = await client.transcript("https://youtu.be/dQw4w9WgXcQ");
 ```
 
 ## Возможности / Capabilities
@@ -70,6 +71,7 @@ const page = await client.readUrl("https://example.com", { maxChars: 8000 });
 | `read_url` / `readUrl` | Страница → плотный Markdown без навигации, рекламы и разметки | 1 кредит |
 | `read_urls` / `readUrls` | То же для группы страниц (до 10 за вызов на платном тарифе, до 5 на бесплатном, параллельно) | 1 кредит за страницу |
 | `fetch_page` / `fetchPage` | Рендер страницы полноценным браузером: скриншот и Markdown | 3 кредита |
+| `transcript` / `transcript` | Текст ролика YouTube: ручные или автоматические субтитры, без скачивания видео; до 5 роликов за вызов | 1 кредит за ролик с полученным текстом, неудачи не тарифицируются |
 | `extract` | Данные строго по заданной схеме; отсутствующие поля возвращаются как `null` | 2 кредита за страницу |
 | `deep_research` / `deepResearch` | Агентное исследование: поиск, чтение источников, синтез связного ответа со ссылками | 20 кредитов + 3 за 1000 токенов ответа |
 | `answer_search` / `answerSearch` | RAG-ответ по вебу с семантическим ранжированием источников (BGE-reranker) | 3 / 5 / 10 кредитов — по `depth` |

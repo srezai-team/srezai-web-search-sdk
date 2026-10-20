@@ -27,4 +27,5 @@ export type {
   ReadOptions,
   SearchOptions,
   TimeRange,
+  TranscriptOptions,
 } from "./types.js";

@@ -49,6 +49,7 @@ with SrezAI() as client:  # ключ из SREZAI_API_KEY
 | `read_url(url, ...)` | Страница → плотный Markdown без навигации и рекламы | 1 кредит |
 | `read_urls(urls, ...)` | То же для группы страниц (до 10 за вызов на платном тарифе, до 5 на бесплатном, параллельно) | 1 кредит за страницу |
 | `fetch_page(url, ...)` | Рендер страницы браузером: скриншот и Markdown | 3 кредита |
+| `transcript(videos, ...)` | Текст ролика YouTube (ручные или авто-субтитры), без скачивания видео | 1 кредит за ролик с полученным текстом |
 | `extract(schema, url=...)` | Данные строго по схеме, без выдуманных значений | 2 кредита за страницу |
 | `deep_research(query)` | Агентное исследование: поиск, чтение, синтез ответа | 20 кредитов + 3 за 1000 токенов ответа |
 | `answer_search(query, ...)` | RAG-ответ по вебу с семантическим ранжированием источников | 3 / 5 / 10 кредитов — по `depth` |
@@ -94,6 +95,30 @@ batch = client.read_urls(["https://a.example", "https://b.example"], max_chars=4
 На батче стоит задавать `max_chars` скромнее: пять больших страниц вытеснят из
 контекста модели всё остальное. Если часть адресов не открылась, остальные
 возвращаются, а неудачи перечисляются в ответе.
+
+### Субтитры YouTube
+
+```python
+res = client.transcript(
+    ["https://www.youtube.com/watch?v=dQw4w9WgXcQ"],
+    languages=["ru", "en"],
+    max_chars=12000,
+)
+
+for video in res["results"]:
+    print(video["title"], video["language"], video["kind"])  # manual | auto
+    print(video["text"])
+    if video["nextFrom"]:
+        # продолжение окна: уже прочитанное повторно не тарифицируется
+        client.transcript(video["url"], from_=video["nextFrom"])
+
+for err in res["errors"]:
+    print(err["input"], err["code"], err["reason"])
+```
+
+До 5 роликов за вызов; частичный успех — норма. ``errors[].code``:
+``empty_result`` (нет дорожки, не тарифицируется), ``rate_limited``,
+``service_unavailable``, ``bad_request``.
 
 ### Извлечение структурированных данных
 

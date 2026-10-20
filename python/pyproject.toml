@@ -4,13 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "srezai"
-version = "0.2.1"
-description = "Python-клиент поискового API срезAI: веб-поиск, чтение страниц и извлечение по схеме для ИИ-агентов"
+version = "0.3.0"
+description = "Python-клиент API срезAI: веб-поиск, чтение страниц, извлечение по схеме и субтитры YouTube для ИИ-агентов"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "срезAI", email = "support@srezai.ru" }]
-keywords = ["search", "api", "llm", "rag", "agents", "scraping", "srezai"]
+keywords = ["search", "api", "llm", "rag", "agents", "scraping", "youtube", "transcripts", "srezai"]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",

@@ -163,3 +163,32 @@ def test_own_client_bypasses_proxy_detection(monkeypatch: pytest.MonkeyPatch) ->
     monkeypatch.setenv("ALL_PROXY", "socks4://127.0.0.1:1080")
     with httpx.Client(trust_env=False) as own:
         assert SrezAI(KEY, client=own)._t is not None
+
+
+def test_transcript_one_video_and_field_mapping(httpx_mock: HTTPXMock) -> None:
+    """Строка → список, snake_case → camelCase, пустые поля не уходят."""
+    httpx_mock.add_response(json={"results": [], "errors": []})
+    make().transcript("https://youtu.be/dQw4w9WgXcQ", languages=["ru"], max_chars=8000)
+
+    import json
+
+    req = httpx_mock.get_requests()[0]
+    assert str(req.url) == "https://srezai.ru/api/v1/transcript"
+    body = json.loads(req.content)
+    assert body["videos"] == ["https://youtu.be/dQw4w9WgXcQ"]
+    assert body["languages"] == ["ru"]
+    assert body["maxChars"] == 8000
+    assert "from" not in body and "to" not in body and "timestamps" not in body
+
+
+def test_transcript_window_passes_through(httpx_mock: HTTPXMock) -> None:
+    """from_ → from (окно продолжения), to остаётся to."""
+    httpx_mock.add_response(json={"results": []})
+    make().transcript(["https://youtu.be/a", "https://youtu.be/b"], from_=1290, to=1800)
+
+    import json
+
+    body = json.loads(httpx_mock.get_requests()[0].content)
+    assert body["from"] == 1290
+    assert body["to"] == 1800
+    assert body["videos"] == ["https://youtu.be/a", "https://youtu.be/b"]

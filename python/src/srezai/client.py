@@ -186,6 +186,53 @@ class SrezAI:
         """
         return self._t.post("/api/v1/fetch", {"url": url, "maxChars": max_chars})
 
+    # --- Субтитры видео ---
+
+    def transcript(
+        self,
+        videos: str | Sequence[str],
+        *,
+        languages: Sequence[str] | None = None,
+        timestamps: bool | None = None,
+        from_: int | None = None,
+        to: int | None = None,
+        max_chars: int | None = None,
+    ) -> dict[str, Any]:
+        """Текст ролика YouTube: ручные или автоматические субтитры.
+
+        Видео и звук не скачиваются — в ответе только текст и метаданные
+        ролика. 1 кредит за каждый ролик, у которого текст получен; неудачи
+        (нет дорожки, лимит частоты) не тарифицируются.
+
+        До 5 роликов за вызов, ответ всегда содержит два списка: ``results``
+        (получилось) и ``errors`` (не получилось, с машинным ``code``).
+        Частичный успех — норма, ошибка одного ролика не роняет остальные.
+
+        Длинный ролик читается окнами: в ответе есть ``truncated`` и
+        ``nextFrom``, следующий вызов передаёт ``from_=`` этим значением, и
+        уже прочитанный текст повторно не тарифицируется.
+
+        :param videos: ссылка на ролик или их список (до 5). Формы:
+            ``watch?v=``, ``youtu.be/``, ``shorts``, ``embed``, голый id.
+        :param languages: языки в порядке предпочтения, по умолчанию
+            ``["ru", "en"]``; ручная дорожка предпочтительнее авто.
+        :param timestamps: ``True`` — фрагменты с таймкодами вместо текста.
+        :param from_: начало окна в секундах (продолжение — ``nextFrom``).
+        :param to: конец окна в секундах.
+        :param max_chars: символов на ролик, 200–50000 (по умолчанию 12000).
+        """
+        return self._t.post(
+            "/api/v1/transcript",
+            {
+                "videos": [videos] if isinstance(videos, str) else list(videos),
+                "languages": list(languages) if languages else None,
+                "timestamps": timestamps,
+                "from": from_,
+                "to": to,
+                "maxChars": max_chars,
+            },
+        )
+
     # --- Структурированное извлечение ---
 
     def extract(

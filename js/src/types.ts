@@ -47,6 +47,22 @@ export interface ReadOptions {
   engine?: Engine;
 }
 
+export interface TranscriptOptions {
+  /**
+   * Языки в порядке предпочтения, по умолчанию ["ru", "en"]. Ручная дорожка
+   * предпочтительнее автоматической.
+   */
+  languages?: string[];
+  /** `true` — фрагменты с таймкодами вместо сплошного текста. */
+  timestamps?: boolean;
+  /** Начало окна в секундах; продолжение — `nextFrom` из прошлого ответа. */
+  from?: number;
+  /** Конец окна в секундах. Должен быть больше `from`. */
+  to?: number;
+  /** Символов текста на ролик: 200–50000, по умолчанию 12000. */
+  maxChars?: number;
+}
+
 export interface AnswerSearchOptions {
   /** fast — 2 страницы, balanced (по умолчанию) — 5, deep — 10. Цена тарифа фиксирована по depth, не зависит от объёма ответа. */
   depth?: AnswerDepth;

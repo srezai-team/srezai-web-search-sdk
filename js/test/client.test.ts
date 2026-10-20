@@ -186,3 +186,22 @@ test("answerSearch шлёт query и depth на /api/v1/answer", async () => {
     },
   );
 });
+
+test("transcript: один ролик уходит массивом, поля — как есть", async () => {
+  await withServer([{ json: { results: [{ videoId: "dQw4w9WgXcQ" }], errors: [] } }], async (baseUrl, captured) => {
+    const client = new SrezAI({ apiKey: KEY, baseUrl, maxRetries: 0 });
+    const res = await client.transcript("https://youtu.be/dQw4w9WgXcQ", {
+      languages: ["ru", "en"],
+      maxChars: 8000,
+    });
+
+    assert.equal(captured[0]?.path, "/api/v1/transcript");
+    assert.deepEqual(captured[0]?.body, {
+      videos: ["https://youtu.be/dQw4w9WgXcQ"],
+      languages: ["ru", "en"],
+      maxChars: 8000,
+    });
+    assert.ok(!("from" in (captured[0]?.body ?? {})), "не заданное окно не отправляется");
+    assert.deepEqual((res as { results: unknown[] }).results, [{ videoId: "dQw4w9WgXcQ" }]);
+  });
+});

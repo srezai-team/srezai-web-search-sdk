@@ -5,6 +5,7 @@ import type {
   ImageSearchOptions,
   ReadOptions,
   SearchOptions,
+  TranscriptOptions,
 } from "./types.js";
 
 export type { TransportOptions as SrezAIOptions };
@@ -76,6 +77,29 @@ export class SrezAI {
     opts: { maxChars?: number } = {},
   ): Promise<T> {
     return this.t.post<T>("/api/v1/fetch", { url, ...opts });
+  }
+
+  /**
+   * Текст ролика YouTube: ручные или автоматические субтитры.
+   *
+   * Видео и звук не скачиваются — в ответе только текст с метаданными ролика.
+   * 1 кредит за каждый ролик, у которого текст получен; неудачи не
+   * тарифицируются. До 5 роликов за вызов, частичный успех — норма: смотрите
+   * `errors` рядом с `results`.
+   *
+   * ```ts
+   * const { results } = await client.transcript("https://youtu.be/…");
+   * console.log(results[0].text);
+   * ```
+   */
+  async transcript<T = Record<string, unknown>>(
+    videos: string | string[],
+    opts: TranscriptOptions = {},
+  ): Promise<T> {
+    return this.t.post<T>("/api/v1/transcript", {
+      videos: Array.isArray(videos) ? videos : [videos],
+      ...opts,
+    });
   }
 
   /**

@@ -52,6 +52,7 @@ const page = await client.readUrl("https://example.com", { maxChars: 8000 });
 | `readUrl(url, opts?)` | Страница → плотный Markdown без навигации и рекламы | 1 кредит |
 | `readUrls(urls, opts?)` | То же для группы страниц (до 10 за вызов на платном тарифе, до 5 на бесплатном, параллельно) | 1 кредит за страницу |
 | `fetchPage(url, opts?)` | Рендер страницы браузером: скриншот и Markdown | 3 кредита |
+| `transcript(videos, opts?)` | Текст ролика YouTube (ручные или авто-субтитры), без скачивания видео | 1 кредит за ролик с полученным текстом |
 | `extract(schema, opts)` | Данные строго по схеме, без выдуманных значений | 2 кредита за страницу |
 | `deepResearch(query)` | Агентное исследование: поиск, чтение, синтез ответа | 20 кредитов + 3 за 1000 токенов ответа |
 | `answerSearch(query, opts?)` | RAG-ответ по вебу с семантическим ранжированием источников | 3 / 5 / 10 кредитов — по `depth` |
@@ -106,6 +107,29 @@ const batch = await client.readUrls(
 На батче стоит задавать `maxChars` скромнее: пять больших страниц вытеснят из
 контекста модели всё остальное. Если часть адресов не открылась, остальные
 возвращаются, а неудачи перечисляются в ответе.
+
+### Субтитры YouTube
+
+```ts
+const { results, errors } = await client.transcript(
+  ["https://www.youtube.com/watch?v=dQw4w9WgXcQ"],
+  { languages: ["ru", "en"], maxChars: 12000 },
+);
+
+for (const video of results) {
+  console.log(video.title, video.language, video.kind); // manual | auto
+  console.log(video.text);
+  if (video.nextFrom) {
+    // продолжение окна: уже прочитанное повторно не тарифицируется
+    await client.transcript(video.url, { from: video.nextFrom });
+  }
+}
+for (const err of errors) console.log(err.input, err.code, err.reason);
+```
+
+До 5 роликов за вызов; частичный успех — норма. `errors[].code`:
+`empty_result` (нет дорожки, не тарифицируется), `rate_limited`,
+`service_unavailable`, `bad_request`.
 
 ### Извлечение структурированных данных
 
